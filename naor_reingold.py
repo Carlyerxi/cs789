@@ -61,7 +61,7 @@ def random_bitnumber(n):
     return p,q,r
 
 
-print(random_bitnumber(6))
+#print(random_bitnumber(6))
 
 # p,q,r generator by random_bitnumber
 def naor_reingold(n,p,q,x,r):
@@ -98,7 +98,7 @@ def naor_reingold(n,p,q,x,r):
         pair_match.append(pairs[i][binary_x[i]])
         for num in pair_match:
             e += num
-    print(pair_match)
+    #print(pair_match)
     #print(e)
 
     # compute g^e mod N 2n bits binary
@@ -107,8 +107,8 @@ def naor_reingold(n,p,q,x,r):
     # convert nx into binary and padding extra zero on the left side
     nx_binary = list(bin(nx_digit).replace('0b', '').zfill(2*n))
     nx_list = [int(s) for s in nx_binary]
-    print(nx_digit)
-    print(nx_list)
+    #print(nx_digit)
+    #print(nx_list)
 
 
     # compare nx_binary with random 2n digits binary which is r
@@ -116,7 +116,7 @@ def naor_reingold(n,p,q,x,r):
     # function u * v = (u1v1 + ... + unvn)%2
     r_binary = list(bin(r).replace('0b', ''))
     r_list = [int(s) for s in r_binary]
-    print(r_list)
+    #print(r_list)
 
 
     bin_match = []
@@ -124,13 +124,26 @@ def naor_reingold(n,p,q,x,r):
         bin_match.append((x*y))
 
     bin_result = sum(bin_match) % 2
-    print(bin_match)
-    print(bin_result)
+    #print(bin_match)
+    return bin_result
 
 
 
-print(naor_reingold(6,11,7,43,3815))
+#print(naor_reingold(6,11,7,43,3815))
 
+def naro_reingold_generator():
+    #pick random n and x
+    n = 6
+    x = 43
+    while n == 6:
+        p = int(random_bitnumber(6)[0])
+        q = int(random_bitnumber(6)[1])
+        r = int(random_bitnumber(6)[2])
+
+        print("naor reingold random generator number is:", naor_reingold(6, p, q, 43, r))
+        break
+
+naro_reingold_generator()
 
 
 
