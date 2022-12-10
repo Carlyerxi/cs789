@@ -1,0 +1,54 @@
+There are 3 files in the zip package
+RSA.py Elgamal.py and naor_reingold.py
+
+
+
+Major import library contain:
+random
+math
+unittest
+
+
+
+The global used functions contain:
+gcd() great commond divisior
+exgcd() extended euclidean algorithm
+fastexp() fast exponentiation algorithm
+euler_phi() Euler's totient function
+modInverse() Modular Multiplicative Inverse
+pow_mod() Modular Exponentiation
+
+
+
+
+The funtion mainly used for RSA:
+pollardRho() Pollard’s Rho Factorization Algorithm: will return one factor of input n
+
+bbs() Blum-Blum-Shub Pseudorandom Number Generator: by given two prime number p,q(can be generater by naor_reingold and tested by miller_rabin method), put into a number "s" that relatively prime to n(p*q), and manually set range of wanted digit binary number, finally convert into decimal number.
+
+is_prime() Miller-Rabin primality test: by given "n" as number and manually set "k" rounds, the result is either True or false
+
+pick_e() random pick e, let 1<e<fn and gcd(e,x) = 1
+
+pick_d() by given e and fn to do the Modular Multiplicative Inverse
+
+RSA encryption and decryption has been provided in the rsa_process() with comment line to explain details
+
+
+
+The function mainly used for Elgamal:
+order(): to prove an integer b is the order of a mod n
+
+primitive_root(): based on the result of phi(n) and order() to judge whether a is the primitive root of n or not
+
+baby_step_gaint_step(): by given g(primitive root), y(β value stand for alice public key computed by pow_mod(g,d,p)), p(prime number), this function will be used to intercept the communication between alice and bob. Eve can use bsgs method calculate the secret key d by sloving the discrete logarithm problem in Elgamal
+
+Elglmal encryption and decryption has been provided in the elgamal() with comment line to explain details
+
+
+
+
+The naor_reingold.py file mainly output the result of random decimal number
+the unique funcition in naor_reingold.py file is random_bitnumber(), when input specific "n", it will output two n bit long primes p and q and 2n bits long prime r. After generator p,q,r, we can manually select n and x into the naor_reingold() to output random 0 or 1. The naro_reingold_generator() can manually set the run tims of the naor_reingold() so that we can get sequence of 0 and 1, finally combain these 0 and 1 and convert it from binary to decimal number.
+
+naor_reingold() algorithm followed lecture 10 slides, and with comment line to explain details
