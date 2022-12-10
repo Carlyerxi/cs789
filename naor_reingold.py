@@ -1,5 +1,6 @@
 import random
 import math
+import unittest
 
 def gcd(a, b):
     if b == 0:
@@ -43,23 +44,39 @@ def is_prime(n, k=10):
 
     return True
 
+# def random_bitnumber(n):
+#     p = random.getrandbits(n)
+#     q = random.getrandbits(n)
+#     r = random.getrandbits(2*n)
+#
+#     while is_prime(p) is False:
+#         p = random.getrandbits(n)
+#     while is_prime(q) is False:
+#         q = random.getrandbits(n)
+#
+#     while p == q:
+#         q = random.getrandbits(n)
+#         while is_prime(q) is False:
+#             q = random.getrandbits(n)
+#
+#     return p,q,r
+
 def random_bitnumber(n):
-    p = random.randint(0, 2**n - 1)
-    q = random.randint(0, 2**n - 1)
-    r = random.randint(0, 2**(2*n) - 1)
+    p = random.randint(2**(n-1), 2**n - 1)
+    q = random.randint(2**(n-1), 2**n - 1)
+    r = random.randint(2**(2*n-1), 2**(2*n) - 1)
 
     while is_prime(p) is False:
-        p = random.randint(0, 2**n - 1)
+        p = random.randint(2**(n-1), 2**n - 1)
     while is_prime(q) is False:
-        q = random.randint(0, 2**n - 1)
+        q = random.randint(2**(n-1), 2**n - 1)
 
     while p == q:
-        q = random.randint(0, 2 ** n - 1)
+        q = random.randint(2**(n-1), 2**n - 1)
         while is_prime(q) is False:
-            q = random.randint(0, 2 ** n - 1)
+            q = random.randint(2**(n-1), 2**n - 1)
 
     return p,q,r
-
 
 #print(random_bitnumber(6))
 
@@ -128,25 +145,43 @@ def naor_reingold(n,p,q,x,r):
     return bin_result
 
 
-
+# get the result of 0 or 1
 #print(naor_reingold(6,11,7,43,3815))
 
 def naro_reingold_generator():
     #pick random n and x
     n = 6
     x = 43
-    while n == 6:
-        p = int(random_bitnumber(6)[0])
-        q = int(random_bitnumber(6)[1])
-        r = int(random_bitnumber(6)[2])
+    new_number = []
 
-        print("naor reingold random generator number is:", naor_reingold(6, p, q, 43, r))
-        break
+    # set run generator n times to get a binary number
+    for i in range(50):
+        if n == 6:
+            p = int(random_bitnumber(6)[0])
+            q = int(random_bitnumber(6)[1])
+            r = int(random_bitnumber(6)[2])
+            new_number.append(naor_reingold(6, p, q, 43, r))
+
+    new_numebr = int(''.join(map(str,new_number)),2)
+    print(new_numebr)
 
 naro_reingold_generator()
 
 
+class TestRSA(unittest.TestCase):
+    def test_random_bitsnumber(self):
+        n = 6
 
+        number = random_bitnumber(n)
+        # since number return p,q,r
+        p = int(number[0])
+        q = int(number[1])
+        r = int(number[2])
 
+        self.assertEqual(len(bin(p)[2:]), n)
+        self.assertEqual(len(bin(r)[2:]), 2*n)
+
+if __name__ == '__main__':
+    unittest.main()
 
 

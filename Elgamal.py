@@ -1,5 +1,6 @@
 import random
 import math
+import unittest
 
 def gcd(a, b):
     if b == 0:
@@ -24,6 +25,9 @@ def euler_phi(a):
         ans = ans // a * (a - 1)
     return ans
 
+# when a^b mod n is 1, the smallest integer b is the order of a mod n
+# according to euler theory phi(n) would be a solution
+# when phi(n) is the order of a mod n, a is the primitive root of n
 def order(a, n, b):
     p = 1
     while p <= n and b ** p % a != 1:
@@ -33,18 +37,31 @@ def order(a, n, b):
     else:
         return -1
 
-def primitive_root(a):
-    n = euler_phi(a)
-    for b in range(2, a):
-        if order(a, n, b) == n:
-            return b
+#print(order(5,7,6))
 
+def primitive_root(p):
+    n = euler_phi(p)
+    for a in range(2, p):
+        if order(p, n, a) == n:
+            return a
+
+#print(primitive_root(7))
 
 def modInverse(a,m):
     for i in range(1, m):
         if (((a % m) * (i % m)) % m == 1):
             return i
     return -1
+
+def baby_step_giant_step(g, y, p):
+    m = int(math.ceil(math.sqrt(p - 1)))
+    S = {pow(g, j, p): j for j in range(m)}
+    gs = pow(g, p - 1 - m, p)
+    for i in range(m):
+        if y in S:
+            return i * m + S[y]
+        y = y * gs % p
+    return None
 
 def bbs(s):
     # s is relatively prime to n
@@ -67,57 +84,78 @@ def bbs(s):
     # convert list b binary number to decimal
     d_num = int(''.join(str(x) for x in b), 2)
 
-def baby_step_giant_step(g, y, p):
-    # Compute m = floor(sqrt(p))
-    m = int(p ** 0.5)
 
-    # Compute the powers of g mod p
-    powers = {g ** i % p: i for i in range(m)}
+def elgamal(p):
+    # alice choose prime p and integer g in Zp
+    # encrypt message m
+    m = 29
+    print("the plaintext is:", m)
 
-    # Compute the inverse of g^m mod p
-    g_inv_m = pow(g, p-1-m, p)
+    g = primitive_root(p)
+    print("the primitive root of p is:",g)
 
-    for j in range(m):
-        # Compute y * (g^m)^j modulo p
-        y_j = y * pow(g_inv_m, j, p) % p
+    # d is alice private key
+    d = random.randint(1,p-1)
 
-        # Check if y * (g^m)^j is in the powers dictionary
-        if y_j in powers:
-            # If y * (g^m)^j is in the powers dictionary, return the corresponding exponent
-            return powers[y_j] + j * m
+    beta = pow_mod(g,d,p)
 
-    # If the exponent is not found, return None
-    return None
+    # alice's public key (p,g,beta)
 
 
-def elgamal(m,p,g):
-    # x is private key
-    x = random.randint(1,p-2)
+    # bob random pick k
+    k = random.randint(1,p-1)
 
-    # y is public key
-    y = pow_mod(g,x,p)
-
-    # random pick k
-    k = random.randint(1,p-2)
-
-    # Encryption alice send y1 y2 to bob
+    # Encryption m (1 <= m <= p-1) send y1 y2 to alice
     y1 = pow_mod(g,k,p)
-    y2 = m * y % p
+    y2 = (m * pow_mod(beta,k,p)) % p
 
-    print(y1,y2)
+    # ciphertext y1 y2 are public
+    cipher = y1,y2
 
-    # Decryption
-    d_message = y2 * modInverse(pow(y1,x,p),p) % p
+    print("the alice's private d is: ",d," β is: ",beta," and bob's random k is:",k)
+    print("bob send the ciphertext:",cipher)
+
+    # Decryption based on m = y1^(-k) * y2 mod p
+    d_message = y2 * modInverse(pow(y1,d,p),p) % p
+
+    print("alice's decrypt message is:",d_message)
+
+    # Eve intercept alice and bob's message
+    # with knowing alice public key (p,g,y) and bob ciphertext y1 and y2
+    # since ciphertext consists random k, we need to use bsgs to compute the discrete log of y
+
+    # x is the alice private key d
+    x = baby_step_giant_step(2, 16, 37)
+    #print(x)
+
+    # once alice private d is known, Eve can get beta pow(g,d,p)
+    # then just repeat d_message
+    new_beta = pow(2,4,37)
+
+    if new_beta == beta:
+        d_message = y2 * modInverse(pow(y1, d, p), p) % p
+
+    print("Eve's decryption is:", d_message)
+
+elgamal(37)
+
+class TestRSA(unittest.TestCase):
+    def test_order(self):
+        # test Order that 5^6 mod 7 is 1
+        self.assertEqual(order(5,7,6), 1)
+
+    def test_primitive_root(self):
+        self.assertEqual(primitive_root(37),2)
+        self.assertEqual(primitive_root(7919),7)
+        self.assertEqual(primitive_root(7), 3)
 
 
+    def test_bsgs(self):
+        self.assertEqual(baby_step_giant_step(2,16,37),4)
 
 
-
-
-
-
-
-
+if __name__ == '__main__':
+    unittest.main()
 
 
 

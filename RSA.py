@@ -160,6 +160,7 @@ def rsa_process():
 
 rsa_process()
 
+
 # How to break RSA with known n and e:
 # (1) ed≡1 (mod φ(n)). Only knowing e and φ(n) can d be calculated
 # (2) φ(n)=(p-1)(q-1). Only knowing p and q can we calculate φ(n)
@@ -197,9 +198,11 @@ class TestRSA(unittest.TestCase):
 
         # pollardRho factorization large number 646184512626547 get 5057989 and try prime test
         self.assertTrue(is_prime(5057989))
+        self.assertTrue(is_prime(127755223))
 
         # 182096120426651 is the decimal number converted by Blum-Blum-Shub Pseudorandom Number Generator
         self.assertTrue(is_prime(182096120426651))
+
 
     def test_bbs(self):
         self.assertTrue(bbs(977),182096120426651)
