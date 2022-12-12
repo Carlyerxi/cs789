@@ -127,6 +127,9 @@ def pick_d(e,fn):
     d = modInverse(e,fn)
     return d
 
+# public key(n,e) private key(n,d)
+# in RSA only (n,e) are pubilc, (p,q,phi(n),d) are private
+
 def encryption(M,e,n):
     # M is plaintext of the message
     return fastexp(M,e,n)
@@ -166,6 +169,11 @@ rsa_process()
 # (2) φ(n)=(p-1)(q-1). Only knowing p and q can we calculate φ(n)
 # (3) n=pq. Only by decomposing n into factors can p and q be calculated
 # We will use the factorization of large integers in this project to break RSA
+
+# break RSA with known e,n
+break_p = pollardRho(46883)
+break_q = 46883 // break_p
+print("the break p and q are:", break_p,break_q)
 
 class TestRSA(unittest.TestCase):
     def test_gcd(self):

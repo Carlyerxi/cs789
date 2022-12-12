@@ -125,12 +125,13 @@ def elgamal(p):
     # since ciphertext consists random k, we need to use bsgs to compute the discrete log of y
 
     # x is the alice private key d
-    x = baby_step_giant_step(2, 16, 37)
-    #print(x)
+    x = baby_step_giant_step(g, beta, p)
+    print("eve decrypt alice's private d is:", x)
 
     # once alice private d is known, Eve can get beta pow(g,d,p)
     # then just repeat d_message
-    new_beta = pow(2,4,37)
+    new_beta = pow(g,x,p)
+    print("eve calculate the beta value and get:",new_beta)
 
     if new_beta == beta:
         d_message = y2 * modInverse(pow(y1, d, p), p) % p
